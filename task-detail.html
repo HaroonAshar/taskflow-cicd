@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TaskFlow - Task Detail</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="add-task.html">Add Task</a>
+    <a href="task-list.html">Task List</a>
+    <a href="task-detail.html">Task Detail</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="container">
+    <h1>Task Detail</h1>
+    <p>Review the selected task, update its status, or remove it from the list.</p>
+
+    <table id="task-details">
+      <tr>
+        <th>Field</th>
+        <th>Information</th>
+      </tr>
+      <tr>
+        <td>Title</td>
+        <td>Design landing page</td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td>Create a clean home page layout with summary cards and navigation links.</td>
+      </tr>
+      <tr>
+        <td>Due Date</td>
+        <td>2026-06-20</td>
+      </tr>
+      <tr>
+        <td>Priority</td>
+        <td>High</td>
+      </tr>
+      <tr>
+        <td>Status</td>
+        <td id="task-status">Pending</td>
+      </tr>
+    </table>
+
+    <button class="btn" type="button" onclick="markComplete()">Mark as Complete</button>
+    <button class="btn" type="button" onclick="deleteTask()">Delete Task</button>
+    <a class="btn" href="task-list.html">Back to Task List</a>
+
+    <p id="task-message"></p>
+  </div>
+
+  <script>
+    function markComplete() {
+      document.getElementById("task-status").textContent = "Completed";
+      document.getElementById("task-message").textContent = "Task marked as complete.";
+    }
+
+    function deleteTask() {
+      document.getElementById("task-details").style.display = "none";
+      document.getElementById("task-message").textContent = "Task deleted from this view.";
+    }
+  </script>
+</body>
+</html>
