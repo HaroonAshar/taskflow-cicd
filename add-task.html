@@ -7,42 +7,50 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>TaskFlow</h1>
-    <nav>
-      <a href="index.html">Dashboard</a>
-      <a href="add-task.html">Add Task</a>
-      <a href="task-list.html">Task List</a>
-      <a href="task-detail.html">Task Detail</a>
-      <a href="about.html">About</a>
-    </nav>
-  </header>
 
-  <main>
-    <h2>Add New Task</h2>
+  <nav>
+    <a href="index.html">Dashboard</a>
+    <a href="add-task.html">Add Task</a>
+    <a href="task-list.html">Task List</a>
+    <a href="task-detail.html">Task Detail</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="container">
+    <h1>Add New Task</h1>
+
     <form>
-      <label for="title">Task Title</label>
-      <input type="text" id="title" name="title" placeholder="Enter task title" required />
+      <div style="margin-bottom: 15px;">
+        <label style="display:block; margin-bottom:5px; font-weight:bold;">Task Title</label>
+        <input type="text" name="title" placeholder="Enter task title" required
+          style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;" />
+      </div>
 
-      <label for="description">Description</label>
-      <textarea id="description" name="description" rows="4" placeholder="Enter task description"></textarea>
+      <div style="margin-bottom: 15px;">
+        <label style="display:block; margin-bottom:5px; font-weight:bold;">Description</label>
+        <textarea name="description" rows="4" placeholder="Enter task description"
+          style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;"></textarea>
+      </div>
 
-      <label for="due-date">Due Date</label>
-      <input type="date" id="due-date" name="due-date" required />
+      <div style="margin-bottom: 15px;">
+        <label style="display:block; margin-bottom:5px; font-weight:bold;">Due Date</label>
+        <input type="date" name="due-date" required
+          style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;" />
+      </div>
 
-      <label for="priority">Priority</label>
-      <select id="priority" name="priority">
-        <option value="high">High</option>
-        <option value="medium" selected>Medium</option>
-        <option value="low">Low</option>
-      </select>
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; margin-bottom:5px; font-weight:bold;">Priority</label>
+        <select name="priority"
+          style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
+          <option value="high">High</option>
+          <option value="medium" selected>Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
 
-      <button type="submit">Add Task</button>
+      <button type="submit" class="btn">Add Task</button>
     </form>
-  </main>
+  </div>
 
-  <footer>
-    <p>&copy; 2026 TaskFlow – UCP DevOps Assignment</p>
-  </footer>
 </body>
 </html>
