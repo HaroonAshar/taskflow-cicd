@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TaskFlow – Task List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="add-task.html">Add Task</a>
+    <a href="task-list.html">Task List</a>
+    <a href="task-detail.html">Task Detail</a>
+    <a href="about.html">About</a>
+  </nav>
+  <div class="container">
+    <h1>Task List</h1>
+    <p>All tasks in TaskFlow. Use the filters below to narrow the list.</p>
+
+    <div class="filters">
+      <button class="btn" onclick="filterTasks('all')">All</button>
+      <button class="btn" onclick="filterTasks('pending')">Pending</button>
+      <button class="btn" onclick="filterTasks('completed')">Completed</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Due Date</th>
+          <th>Priority</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-status="pending">
+          <td><a href="task-detail.html">Design landing page</a></td>
+          <td>2026-06-20</td>
+          <td>High</td>
+          <td>Pending</td>
+        </tr>
+        <tr data-status="completed">
+          <td><a href="task-detail.html">Set up CI pipeline</a></td>
+          <td>2026-06-15</td>
+          <td>High</td>
+          <td>Completed</td>
+        </tr>
+        <tr data-status="pending">
+          <td><a href="task-detail.html">Write project README</a></td>
+          <td>2026-06-22</td>
+          <td>Medium</td>
+          <td>Pending</td>
+        </tr>
+        <tr data-status="completed">
+          <td><a href="task-detail.html">Create shared stylesheet</a></td>
+          <td>2026-06-12</td>
+          <td>Low</td>
+          <td>Completed</td>
+        </tr>
+        <tr data-status="pending">
+          <td><a href="task-detail.html">Configure Render deploy hook</a></td>
+          <td>2026-06-25</td>
+          <td>Medium</td>
+          <td>Pending</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <a class="btn" href="add-task.html">+ Add New Task</a>
+  </div>
+
+  <script>
+    function filterTasks(status) {
+      var rows = document.querySelectorAll("tbody tr");
+      rows.forEach(function (row) {
+        if (status === "all" || row.getAttribute("data-status") === status) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+  </script>
+</body>
+</html>
