@@ -2,66 +2,97 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TaskFlow - Task Detail</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="View full details of a TaskFlow task.">
+  <title>TaskFlow — Task Detail</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="add-task.html">Add Task</a>
-    <a href="task-list.html">Task List</a>
-    <a href="task-detail.html">Task Detail</a>
-    <a href="about.html">About</a>
+  <nav class="navbar">
+    <a class="brand" href="index.html"><span class="logo">✓</span> Task<span><b>Flow</b></span></a>
+    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+    <div class="nav-links">
+      <a href="index.html">Dashboard</a>
+      <a href="task-list.html">Tasks</a>
+      <a href="add-task.html">Add Task</a>
+      <a href="about.html">About</a>
+      <button class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </div>
   </nav>
 
-  <div class="container">
-    <h1>Task Detail</h1>
-    <p>Review the selected task, update its status, or remove it from the list.</p>
+  <div class="container" id="content"><!-- injected --></div>
 
-    <table id="task-details">
-      <tr>
-        <th>Field</th>
-        <th>Information</th>
-      </tr>
-      <tr>
-        <td>Title</td>
-        <td>Design landing page</td>
-      </tr>
-      <tr>
-        <td>Description</td>
-        <td>Create a clean home page layout with summary cards and navigation links.</td>
-      </tr>
-      <tr>
-        <td>Due Date</td>
-        <td>2026-06-20</td>
-      </tr>
-      <tr>
-        <td>Priority</td>
-        <td>High</td>
-      </tr>
-      <tr>
-        <td>Status</td>
-        <td id="task-status">Pending</td>
-      </tr>
-    </table>
-
-    <button class="btn" type="button" onclick="markComplete()">Mark as Complete</button>
-    <button class="btn" type="button" onclick="deleteTask()">Delete Task</button>
-    <a class="btn" href="task-list.html">Back to Task List</a>
-
-    <p id="task-message"></p>
-  </div>
-
+  <script src="app.js"></script>
   <script>
-    function markComplete() {
-      document.getElementById("task-status").textContent = "Completed";
-      document.getElementById("task-message").textContent = "Task marked as complete.";
-    }
+    (function () {
+      const { Store, toast, fmtDate, cap, param } = window.TaskFlow;
+      const id = param("id");
+      const t = id ? Store.get(id) : null;
+      const root = document.getElementById("content");
 
-    function deleteTask() {
-      document.getElementById("task-details").style.display = "none";
-      document.getElementById("task-message").textContent = "Task deleted from this view.";
-    }
+      if (!t) {
+        root.innerHTML = `<div class="card empty"><div class="big">🔍</div>
+          <p>Task not found.</p><br><a class="btn" href="task-list.html">← Back to tasks</a></div>`;
+        return;
+      }
+
+      const done = t.status === "completed";
+      const pct = done ? 100 : (t.priority === "high" ? 35 : t.priority === "medium" ? 55 : 70);
+
+      root.innerHTML = `
+        <div class="page-head">
+          <div class="eyebrow"><a href="task-list.html" style="color:inherit;text-decoration:none">Tasks</a> / Detail</div>
+          <h1>${t.title}</h1>
+          <p>
+            <span class="badge ${t.status}">${cap(t.status)}</span>
+            <span class="badge ${t.priority}">${cap(t.priority)} priority</span>
+          </p>
+        </div>
+
+        <div class="detail-grid">
+          <div class="card">
+            <h2 class="section-title">Description</h2>
+            <p style="color:var(--text-soft)">${t.desc || "No description provided."}</p>
+
+            <h2 class="section-title" style="margin-top:26px">Progress</h2>
+            <div class="progress"><i style="width:${pct}%"></i></div>
+            <p class="muted" style="margin-top:8px;font-size:13px">${pct}% complete</p>
+
+            <h2 class="section-title" style="margin-top:26px">Activity</h2>
+            <ul class="timeline">
+              <li><div class="t">Task created</div><div class="d">Added to the workspace</div></li>
+              <li><div class="t">Priority set to ${cap(t.priority)}</div><div class="d">Used for sorting & dashboards</div></li>
+              <li><div class="t">${done ? "Marked completed ✅" : "Currently in progress"}</div><div class="d">Due ${fmtDate(t.due)}</div></li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Details</h2>
+            <ul class="meta-list">
+              <li><span class="k">Status</span><span class="badge ${t.status}">${cap(t.status)}</span></li>
+              <li><span class="k">Priority</span><span class="badge ${t.priority}">${cap(t.priority)}</span></li>
+              <li><span class="k">Due date</span><span>${fmtDate(t.due)}</span></li>
+              <li><span class="k">Task ID</span><span class="muted">#${t.id}</span></li>
+            </ul>
+            <div class="form-actions" style="flex-direction:column;align-items:stretch">
+              <button class="btn" id="toggle">${done ? "Reopen task" : "Mark as completed"}</button>
+              <a class="btn secondary" href="task-list.html">← Back to list</a>
+              <button class="btn danger" id="del">Delete task</button>
+            </div>
+          </div>
+        </div>`;
+
+      document.getElementById("toggle").addEventListener("click", () => {
+        Store.update(t.id, { status: done ? "pending" : "completed" });
+        toast(done ? "Task reopened" : "Task completed ✅");
+        setTimeout(() => location.reload(), 600);
+      });
+      document.getElementById("del").addEventListener("click", () => {
+        Store.remove(t.id); toast("Task deleted");
+        setTimeout(() => location.href = "task-list.html", 600);
+      });
+    })();
   </script>
 </body>
 </html>

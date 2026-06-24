@@ -2,84 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TaskFlow – Task List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse, search and filter all your TaskFlow tasks.">
+  <title>TaskFlow — Tasks</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="add-task.html">Add Task</a>
-    <a href="task-list.html">Task List</a>
-    <a href="task-detail.html">Task Detail</a>
-    <a href="about.html">About</a>
+  <nav class="navbar">
+    <a class="brand" href="index.html"><span class="logo">✓</span> Task<span><b>Flow</b></span></a>
+    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+    <div class="nav-links">
+      <a href="index.html">Dashboard</a>
+      <a href="task-list.html">Tasks</a>
+      <a href="add-task.html">Add Task</a>
+      <a href="about.html">About</a>
+      <button class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </div>
   </nav>
-  <div class="container">
-    <h1>Task List</h1>
-    <p>All tasks in TaskFlow. Use the filters below to narrow the list.</p>
 
-    <div class="filters">
-      <button class="btn" onclick="filterTasks('all')">All</button>
-      <button class="btn" onclick="filterTasks('pending')">Pending</button>
-      <button class="btn" onclick="filterTasks('completed')">Completed</button>
+  <div class="container">
+    <div class="page-head">
+      <div class="eyebrow">Workspace</div>
+      <h1>Task List</h1>
+      <p>Search, filter and manage every task in your workspace. Click a task to view full details.</p>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Due Date</th>
-          <th>Priority</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr data-status="pending">
-          <td><a href="task-detail.html">Design landing page</a></td>
-          <td>2026-06-20</td>
-          <td>High</td>
-          <td>Pending</td>
-        </tr>
-        <tr data-status="completed">
-          <td><a href="task-detail.html">Set up CI pipeline</a></td>
-          <td>2026-06-15</td>
-          <td>High</td>
-          <td>Completed</td>
-        </tr>
-        <tr data-status="pending">
-          <td><a href="task-detail.html">Write project README</a></td>
-          <td>2026-06-22</td>
-          <td>Medium</td>
-          <td>Pending</td>
-        </tr>
-        <tr data-status="completed">
-          <td><a href="task-detail.html">Create shared stylesheet</a></td>
-          <td>2026-06-12</td>
-          <td>Low</td>
-          <td>Completed</td>
-        </tr>
-        <tr data-status="pending">
-          <td><a href="task-detail.html">Configure Render deploy hook</a></td>
-          <td>2026-06-25</td>
-          <td>Medium</td>
-          <td>Pending</td>
-        </tr>
-      </tbody>
-    </table>
-    <br>
-    <a class="btn" href="add-task.html">+ Add New Task</a>
+    <div class="toolbar">
+      <div class="search"><input id="search" type="search" placeholder="Search tasks…" aria-label="Search tasks"></div>
+      <div class="filters" id="filters">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="pending">Pending</button>
+        <button class="chip" data-filter="completed">Completed</button>
+        <button class="chip" data-filter="high">High Priority</button>
+      </div>
+      <a class="btn" href="add-task.html">+ Add Task</a>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Title</th><th>Due Date</th><th>Priority</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
   </div>
 
+  <script src="app.js"></script>
   <script>
-    function filterTasks(status) {
-      var rows = document.querySelectorAll("tbody tr");
-      rows.forEach(function (row) {
-        if (status === "all" || row.getAttribute("data-status") === status) {
-          row.style.display = "";
-        } else {
-          row.style.display = "none";
+    (function () {
+      const { Store, toast, fmtDate, cap } = window.TaskFlow;
+      let filter = "all", query = "";
+
+      function matches(t) {
+        const byFilter =
+          filter === "all" ? true :
+          filter === "high" ? t.priority === "high" :
+          t.status === filter;
+        const byQuery = !query || t.title.toLowerCase().includes(query);
+        return byFilter && byQuery;
+      }
+
+      function render() {
+        const rows = Store.all().filter(matches)
+          .sort((a, b) => (a.due < b.due ? -1 : 1));
+        const tbody = document.getElementById("rows");
+        if (!rows.length) {
+          tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="big">🗂️</div>No tasks match your filters.</div></td></tr>`;
+          return;
+        }
+        tbody.innerHTML = rows.map(t => `
+          <tr>
+            <td><a href="task-detail.html?id=${t.id}">${t.title}</a></td>
+            <td>${fmtDate(t.due)}</td>
+            <td><span class="badge ${t.priority}">${cap(t.priority)}</span></td>
+            <td><span class="badge ${t.status}">${cap(t.status)}</span></td>
+            <td>
+              <button class="btn sm secondary" data-toggle="${t.id}">${t.status === "completed" ? "Reopen" : "Complete"}</button>
+              <button class="btn sm danger" data-del="${t.id}">Delete</button>
+            </td>
+          </tr>`).join("");
+      }
+
+      document.getElementById("filters").addEventListener("click", e => {
+        const btn = e.target.closest(".chip"); if (!btn) return;
+        document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        filter = btn.dataset.filter; render();
+      });
+      document.getElementById("search").addEventListener("input", e => {
+        query = e.target.value.trim().toLowerCase(); render();
+      });
+      document.getElementById("rows").addEventListener("click", e => {
+        const toggle = e.target.closest("[data-toggle]");
+        const del = e.target.closest("[data-del]");
+        if (toggle) {
+          const t = Store.get(toggle.dataset.toggle);
+          Store.update(t.id, { status: t.status === "completed" ? "pending" : "completed" });
+          toast(t.status === "completed" ? "Task reopened" : "Task completed ✅");
+          render();
+        }
+        if (del) {
+          Store.remove(del.dataset.del); toast("Task deleted"); render();
         }
       });
-    }
+
+      render();
+    })();
   </script>
 </body>
 </html>
