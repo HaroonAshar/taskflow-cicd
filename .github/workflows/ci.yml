@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - develop
+  push:
+    branches:
+      - develop
 
 jobs:
   build-and-push:
@@ -31,3 +34,4 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/taskflow-cicd:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/taskflow-cicd:${{ github.sha }}
+
