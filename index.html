@@ -2,28 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TaskFlow – Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TaskFlow — a lightweight, modern task management dashboard.">
+  <title>TaskFlow — Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="add-task.html">Add Task</a>
-    <a href="task-list.html">Task List</a>
-    <a href="task-detail.html">Task Detail</a>
-    <a href="about.html">About</a>
+  <nav class="navbar">
+    <a class="brand" href="index.html"><span class="logo">✓</span> Task<span><b>Flow</b></span></a>
+    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+    <div class="nav-links">
+      <a href="index.html">Dashboard</a>
+      <a href="task-list.html">Tasks</a>
+      <a href="add-task.html">Add Task</a>
+      <a href="about.html">About</a>
+      <button class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </div>
   </nav>
+
   <div class="container">
-    <h1>Welcome to TaskFlow</h1>
-    <p>Your lightweight task management application.</p>
-    <table>
-      <tr><th>Status</th><th>Count</th></tr>
-      <tr><td>Total Tasks</td><td>10</td></tr>
-      <tr><td>Pending</td><td>6</td></tr>
-      <tr><td>Completed</td><td>4</td></tr>
-    </table>
-    <br>
-    <a class="btn" href="add-task.html">+ Add New Task</a>
+    <section class="hero">
+      <div class="glow"></div>
+      <h1>Stay on top of every task.</h1>
+      <p>TaskFlow is a fast, lightweight workspace for planning, tracking and shipping your work — with a clean dashboard and zero clutter.</p>
+      <div class="actions">
+        <a class="btn ghost" href="add-task.html">+ Add New Task</a>
+        <a class="btn ghost" href="task-list.html">View All Tasks</a>
+      </div>
+    </section>
+
+    <div class="stats-grid" id="stats"><!-- injected --></div>
+
+    <div class="card">
+      <h2 class="section-title">Recent tasks</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Title</th><th>Due Date</th><th>Priority</th><th>Status</th></tr>
+          </thead>
+          <tbody id="recent"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
+
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      const { Store, fmtDate, cap } = window.TaskFlow;
+      const tasks = Store.all();
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.status === "completed").length;
+      const pending = total - completed;
+      const high = tasks.filter(t => t.priority === "high" && t.status !== "completed").length;
+      const pct = total ? Math.round((completed / total) * 100) : 0;
+
+      document.getElementById("stats").innerHTML = `
+        <div class="stat"><div class="ico blue">📋</div><div class="num">${total}</div><div class="label">Total Tasks</div></div>
+        <div class="stat"><div class="ico amber">⏳</div><div class="num">${pending}</div><div class="label">Pending</div></div>
+        <div class="stat"><div class="ico green">✅</div><div class="num">${completed}</div><div class="label">Completed</div>
+          <div class="bar"><i style="width:${pct}%"></i></div></div>
+        <div class="stat"><div class="ico red">🔥</div><div class="num">${high}</div><div class="label">High Priority Open</div></div>`;
+
+      const recent = tasks.slice().sort((a, b) => (a.due < b.due ? -1 : 1)).slice(0, 5);
+      document.getElementById("recent").innerHTML = recent.map(t => `
+        <tr>
+          <td><a href="task-detail.html?id=${t.id}">${t.title}</a></td>
+          <td>${fmtDate(t.due)}</td>
+          <td><span class="badge ${t.priority}">${cap(t.priority)}</span></td>
+          <td><span class="badge ${t.status}">${cap(t.status)}</span></td>
+        </tr>`).join("") || `<tr><td colspan="4" class="empty">No tasks yet.</td></tr>`;
+    })();
+  </script>
 </body>
 </html>

@@ -1,47 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>About - TaskFlow</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <nav>
-      <a href="index.html">Home</a>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="About TaskFlow and its CI/CD pipeline.">
+  <title>TaskFlow — About</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a class="brand" href="index.html"><span class="logo">✓</span> Task<span><b>Flow</b></span></a>
+    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+    <div class="nav-links">
+      <a href="index.html">Dashboard</a>
+      <a href="task-list.html">Tasks</a>
       <a href="add-task.html">Add Task</a>
-      <a href="task-list.html">Task List</a>
-      <a href="task-detail.html">Task Detail</a>
       <a href="about.html">About</a>
-    </nav>
-    <div class="container">
+      <button class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-head">
+      <div class="eyebrow">About</div>
       <h1>About TaskFlow</h1>
-      <p>
-        TaskFlow is a lightweight task management application that helps you
-        organize your daily work efficiently.
-      </p>
-      <h2>Purpose</h2>
-      <p>
-        TaskFlow allows users to create tasks, track their progress, set
-        priorities, and mark tasks as complete once finished.
-      </p>
-      <h2>How to Use</h2>
-      <ul>
-        <li>
-          Go to <strong>Home</strong> to see an overview of all your tasks.
-        </li>
-        <li>
-          Go to <strong>Add Task</strong> to create a new task with a title,
-          description, due date, and priority.
-        </li>
-        <li>
-          Visit <strong>Task List</strong> to view all tasks and filter them by
-          status (All / Pending / Completed).
-        </li>
-        <li>
-          Click on a task in <strong>Task Detail</strong> to view its full
-          information, mark it as complete, or delete it.
-        </li>
+      <p>TaskFlow is a lightweight task-management web app built to demonstrate a complete, modern CI/CD workflow — from feature branch to automated deployment.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="card feature"><div class="ico">⚡</div><h3>Fast & Lightweight</h3><p>Pure HTML, CSS and JavaScript — no frameworks, no build step. Loads instantly.</p></div>
+      <div class="card feature"><div class="ico">🎨</div><h3>Modern UI</h3><p>A responsive design system with light & dark themes, accessible components and smooth interactions.</p></div>
+      <div class="card feature"><div class="ico">💾</div><h3>Works Offline</h3><p>Tasks persist in your browser via localStorage — create, complete and delete without a backend.</p></div>
+      <div class="card feature"><div class="ico">🐳</div><h3>Dockerized</h3><p>Served from an nginx Alpine container for a tiny, production-ready image.</p></div>
+      <div class="card feature"><div class="ico">🔁</div><h3>Continuous Integration</h3><p>Every pull request builds and pushes a Docker image to Docker Hub via GitHub Actions.</p></div>
+      <div class="card feature"><div class="ico">🚀</div><h3>Continuous Deployment</h3><p>Merges into <code>develop</code> trigger an automatic deploy to Render through a webhook.</p></div>
+    </div>
+
+    <div class="card" style="margin-top:26px">
+      <h2 class="section-title">CI/CD Pipeline</h2>
+      <ul class="timeline">
+        <li><div class="t">1 · Feature branch</div><div class="d">Work happens on <code>feature/&lt;name&gt;-dev/&lt;feature&gt;</code> branches.</div></li>
+        <li><div class="t">2 · Pull request → CI</div><div class="d">GitHub Actions builds the Docker image and pushes it to Docker Hub.</div></li>
+        <li><div class="t">3 · Merge to develop → CD</div><div class="d">A webhook triggers an automatic deployment to Render.</div></li>
+        <li><div class="t">4 · Live</div><div class="d">The updated site is served from the nginx container.</div></li>
       </ul>
     </div>
-  </body>
+
+    <div class="card" style="margin-top:26px;text-align:center">
+      <h2 class="section-title">Tech Stack</h2>
+      <p class="muted">HTML5 · CSS3 · Vanilla JavaScript · Docker · nginx · GitHub Actions · Render</p>
+      <br>
+      <a class="btn" href="task-list.html">Explore the App →</a>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
 </html>
